@@ -30,7 +30,7 @@ Browser → Backend/API → Database
 - Endpoint 1
 - Endpoint 2
 
-## User Roles
+## User Roles:
 
 ### User
 ...
@@ -41,13 +41,14 @@ Browser → Backend/API → Database
 ### Administrator
 ...
 
-## Testing: Functional Requirements
+## Testing: 
+### Functional Requirements
 
 FR-01 ...
 FR-02 ...
 ...
 
-## Testing: Security Requirements
+### Security Requirements
 
 SR-01 ...
 SR-02 ...
