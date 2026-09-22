@@ -11,11 +11,24 @@ Brief description of the application.
 
 ## Technology Stack
 
-- Frontend:
-- Backend:
-- Database:
-- Authentication:
-- Deployment:
+- Frontend: HTML, CSS, Bootstrap, EJS, JS
+- Backend: Node, Express
+- Database: SQLite
+- Authentication: Express sessions/cookies
+- Deployment: Docker / Render
+
+## Architecture
+
+Browser → Backend/API → Database
+
+## Database Structure
+
+...
+
+## API Endpoints
+
+- Endpoint 1
+- Endpoint 2
 
 ## User Roles
 
@@ -28,26 +41,22 @@ Brief description of the application.
 ### Administrator
 ...
 
-## Functional Requirements
+## Testing: Functional Requirements
 
 FR-01 ...
 FR-02 ...
 ...
 
-## Security Requirements
+## Testing: Security Requirements
 
 SR-01 ...
 SR-02 ...
 ...
 
-## Planned Architecture
+## Security Controls
 
-Browser → Backend/API → PostgreSQL
+...
 
-## Development Setup
-
-Instructions will be added during implementation.
-
-## Repository Structure
+## Known Limitations
 
 ...
