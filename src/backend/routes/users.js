@@ -1,4 +1,4 @@
-//Track leaving and entering galleries and rooms
+//Allows admins to edit,delete, and create users in the database
 
 const express = require("express");
 

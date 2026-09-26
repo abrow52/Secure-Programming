@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <!--The Login Page-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>login</title>
@@ -12,35 +13,50 @@
     <header>
         <div class="navbar shadow-sm">
           <div class="container">
-            <a href="#" class="navbar-brand d-flex align-items-center">
-              <img src="/images/logo.svg">
-              <strong>Album</strong>
+            <a href="/" class="navbar-brand d-flex align-items-center">
+              <img style="width: 50px; height: auto;" src="/logo.svg">
+              <strong>AA Galleries</strong>
             </a>
             <div>
               <ul style="display:flex; list-style-type: none; gap: 10px">
-                  <li class="nav-item"><a class="nav-link" aria-current="page" href="index.html">Home</a></li>
-                  <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                  <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
+                  <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
+                  <% if (user && (user.role === "admin" || user.role === "employee")) { %>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/events">Events</a>
+                  </li>
+                <% } %>
+                <% if (user && user.role === "admin") { %>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/users">Users</a>
+                  </li>
+                <% } %>
               </ul>
             </div>
           </div>
         </div>
       </header>
-    <main class="form-signin w-100 m-auto centering">
-        <form onsubmit="login(event)">
-            <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-            <div class="form-floating">
-                <input type="text" class="form-control" id="floatingInput" placeholder="Username" required/>
-                <label for="floatingInput">Username</label>
-            </div>
-            <div class="form-floating">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" />
-                <label for="floatingPassword">Password</label>
-            </div>
-            <button class="btn btn-primary w-100 py-2" type="submit">
-              <strong>Sign in</strong>
-            </button>
+      <section class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+        <form action="/api/auth/login" method="POST" style="width: 23rem;">
+
+          <h3 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Log in</h3>
+
+          <div data-mdb-input-init class="form-outline mb-4">
+            <input type="text" id="username" name="username" class="form-control form-control-lg" required/>
+            <label class="form-label" for="form2Example18">Username</label>
+          </div>
+
+          <div data-mdb-input-init class="form-outline mb-4">
+            <input type="password" id="password" name="password" class="form-control form-control-lg" required/>
+            <label class="form-label" for="form2Example28">Password</label>
+          </div>
+
+          <div class="pt-1 mb-4">
+            <button class="btn btn-info btn-lg btn-block" type="submit">Login</button>
+          </div>
+
         </form>
-    </main>
+      </section>
     <script src="bootstrap-5.3.8-examples/assets/dist/js/bootstrap.bundle.min.js" class="astro-vvvwv3sm">
     </script>
         

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head>
-    <!--The Rooms Page: Where the rooms in the selected gallery are displayed-->
+    <!--The Events Page: Employees and Admin can see the history of events (people leaving and entering rooms and galleries)-->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="" />
@@ -113,48 +113,3 @@
         </div>
       </div>
     </header>
-    <main>
-      <div class="container">
-        <!--Template for loading the rooms from the database-->
-        <section class="py-5 text-center position-relative">
-          <a href="/" class="btn position-absolute start-0">&laquo; Exit Gallery</a>
-            <h1 class="fw-light">
-                <%= gallery.name %>
-            </h1>
-        </section>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-2">
-          <% rooms.forEach(room => { %>
-            <div class="col">
-              <div class="card shadow-sm">
-                <img src="/placeholder.png" alt="<%= room.name %>">
-                <div class="card-body">
-                  <h5 class="card-title">
-                      <%= room.name %>
-                  </h5>
-                  <p class="card-text">
-                      <%= room.description %>
-                  </p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <a href="/rooms/<%= room.room_id %>" class="btn btn-sm btn-outline-secondary">
-                          Enter Room
-                      </a>
-                    </div>
-                    <small class="text-body-secondary">
-                      <p>Ocupancy:  </p>
-                        <!-- <%= room.capacity %> -->
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <% }); %>
-        </div>
-      </div>
-    </main>
-    <script
-      src="../assets/dist/js/bootstrap.bundle.min.js"
-      class="astro-vvvwv3sm"
-    ></script>
-  </body>
-</html>
