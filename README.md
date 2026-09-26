@@ -31,9 +31,9 @@ Browser → Backend/API → Database
 - Endpoint 2
 
 ## User Roles:
-- Guests - Browse the galleries
-- Guests & Employees - Record gallery events
-- Guests, Employees, and Admins - Edit, create, and delete users
+- Guests, Employees, and Admins - Browse the galleries
+- Employees & Admins - Record gallery events
+- Admins - Edit, create, and delete users
 
 ## Testing: 
 ### Functional Requirements
