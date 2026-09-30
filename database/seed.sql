@@ -19,61 +19,61 @@ INSERT INTO Rooms
     (room_id, gallery_id, name, capacity, description, image_url) VALUES
     (11, 101, 'Dogs', 15, 'A room of dog pictures', NULL),
     (12, 101, 'Cats', 15, 'A room of cat pictures', NULL),
-    (13, 102, 'Water', 15, 'A room of water pictures', NULL),
-    (14, 102, 'Forest', 15, 'A room of forest pictures', NULL),
+    (13, 102, 'Flowers', 15, 'A room of flower pictures', NULL),
+    (14, 102, 'Trees', 15, 'A room of tree pictures', NULL),
     (15, 103, 'Cake', 15, 'A room of cake pictures', NULL),
-    (16, 103, 'Pie', 15, 'A room of pie pictures', NULL);
+    (16, 103, 'Cookies', 15, 'A room of cookie pictures', NULL);
 
 
 INSERT INTO Paintings
     (painting_id, room_id, name, image_url) VALUES
     -- Dogs
-    (1001, 11, 'Dog Painting 1', 'Animals/dog1.jpg'),
-    (1002, 11, 'Dog Painting 2', 'Animals/dog2.jpg'),
-    (1003, 11, 'Dog Painting 3', 'Animals/dog3.jpg'),
-    (1004, 11, 'Dog Painting 4', NULL),
-    (1005, 11, 'Dog Painting 5', NULL),
-    (1006, 11, 'Dog Painting 6', NULL),
+    (1001, 11, 'Dog Picture 1', 'animals/dog/dog1.jpg'),
+    (1002, 11, 'Dog Picture 2', 'animals/dog/dog2.jpg'),
+    (1003, 11, 'Dog Picture 3', 'animals/dog/dog3.jpg'),
+    (1004, 11, 'Dog Picture 4', 'animals/dog/dog4.jpg'),
+    (1005, 11, 'Dog Picture 5', 'animals/dog/dog5.jpg'),
+    (1006, 11, 'Dog Picture 6', 'animals/dog/dog6.jpg'),
 
     -- Cats
-    (1007, 12, 'Cat Painting 1', NULL),
-    (1008, 12, 'Cat Painting 2', NULL),
-    (1009, 12, 'Cat Painting 3', NULL),
-    (1010, 12, 'Cat Painting 4', NULL),
-    (1011, 12, 'Cat Painting 5', NULL),
-    (1012, 12, 'Cat Painting 6', NULL),
+    (1007, 12, 'Cat Picture 1', 'animals/cats/cat1.jpg'),
+    (1008, 12, 'Cat Picture 2', 'animals/cats/cat2.jpg'),
+    (1009, 12, 'Cat Picture 3', 'animals/cats/cat3.jpg'),
+    (1010, 12, 'Cat Picture 4', 'animals/cats/cat4.jpg'),
+    (1011, 12, 'Cat Picture 5', 'animals/cats/cat5.jpg'),
+    (1012, 12, 'Cat Picture 6', 'animals/cats/cat6.jpg'),
 
-    -- Water
-    (1013, 13, 'Water Painting 1', NULL),
-    (1014, 13, 'Water Painting 2', NULL),
-    (1015, 13, 'Water Painting 3', NULL),
-    (1016, 13, 'Water Painting 4', NULL),
-    (1017, 13, 'Water Painting 5', NULL),
-    (1018, 13, 'Water Painting 6', NULL),
+    -- Flower
+    (1013, 13, 'Flower Picture 1', 'nature/flowers/flower1.jpg'),
+    (1014, 13, 'Flower Picture 2', 'nature/flowers/flower2.jpg'),
+    (1015, 13, 'Flower Picture 3', 'nature/flowers/flower3.jpg'),
+    (1016, 13, 'Flower Picture 4', 'nature/flowers/flower4.jpg'),
+    (1017, 13, 'Flower Picture 5', 'nature/flowers/flower5.jpg'),
+    (1018, 13, 'Flower Picture 6', 'nature/flowers/flower6.jpg'),
 
-    -- Forest
-    (1019, 14, 'Forest Painting 1', NULL),
-    (1020, 14, 'Forest Painting 2', NULL),
-    (1021, 14, 'Forest Painting 3', NULL),
-    (1022, 14, 'Forest Painting 4', NULL),
-    (1023, 14, 'Forest Painting 5', NULL),
-    (1024, 14, 'Forest Painting 6', NULL),
+    -- Tree
+    (1019, 14, 'Tree Picture 1', 'nature/trees/tree1.jpg'),
+    (1020, 14, 'Tree Picture 2', 'nature/trees/tree2.jpg'),
+    (1021, 14, 'Tree Picture 3', 'nature/trees/tree3.jpg'),
+    (1022, 14, 'Tree Picture 4', 'nature/trees/tree4.jpg'),
+    (1023, 14, 'Tree Picture 5', 'nature/trees/tree5.jpg'),
+    (1024, 14, 'Tree Picture 6', 'nature/trees/tree6.jpg'),
 
     -- Cake
-    (1025, 15, 'Cake Painting 1', NULL),
-    (1026, 15, 'Cake Painting 2', NULL),
-    (1027, 15, 'Cake Painting 3', NULL),
-    (1028, 15, 'Cake Painting 4', NULL),
-    (1029, 15, 'Cake Painting 5', NULL),
-    (1030, 15, 'Cake Painting 6', NULL),
+    (1025, 15, 'Cake Picture 1', 'food/cake/cake1.jpg'),
+    (1026, 15, 'Cake Picture 2', 'food/cake/cake2.jpg'),
+    (1027, 15, 'Cake Picture 3', 'food/cake/cake3.jpg'),
+    (1028, 15, 'Cake Picture 4', 'food/cake/cake4.jpg'),
+    (1029, 15, 'Cake Picture 5', 'food/cake/cake5.jpg'),
+    (1030, 15, 'Cake Picture 6', 'food/cake/cake6.jpg'),
 
-    -- Pie
-    (1031, 16, 'Pie Painting 1', NULL),
-    (1032, 16, 'Pie Painting 2', NULL),
-    (1033, 16, 'Pie Painting 3', NULL),
-    (1034, 16, 'Pie Painting 4', NULL),
-    (1035, 16, 'Pie Painting 5', NULL),
-    (1036, 16, 'Pie Painting 6', NULL);
+    -- Cookie
+    (1031, 16, 'Cookie Picture 1', 'food/cookies/cookie1.jpg'),
+    (1032, 16, 'Cookie Picture 2', 'food/cookies/cookie2.jpg'),
+    (1033, 16, 'Cookie Picture 3', 'food/cookies/cookie3.jpg'),
+    (1034, 16, 'Cookie Picture 4', 'food/cookies/cookie4.jpg'),
+    (1035, 16, 'Cookie Picture 5', 'food/cookies/cookie5.jpg'),
+    (1036, 16, 'Cookie Picture 6', 'food/cookies/cookie6.jpg');
 
 
 COMMIT;
