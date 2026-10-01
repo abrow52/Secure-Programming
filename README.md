@@ -7,15 +7,15 @@
 
 ## Download and Deployment
 ### Installation
-- Download the repository
+Download the repository to your machine
 ### Terminal Commands
 - npm install express
 - npm install express-session
 - npm install node
 ### Running (local host)
-- Navigate to the backend directory (Secure-Programming/src/backend)
+Navigate to the backend directory (Secure-Programming/src/backend)
 - In the terminal, type: node server.js
-- Enter the given link into a browser to access the site (http://localhost:3000/)
+Enter the given link into a browser to access the site (http://localhost:3000/)
 
 ## Project Description
 
