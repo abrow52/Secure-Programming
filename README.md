@@ -16,8 +16,6 @@ Download the repository to your machine
 Navigate to the backend directory (Secure-Programming/src/backend)
 - In the terminal, type: node server.js
 
-...
-
 Enter the given link into a browser to access the site (http://localhost:3000/)
 
 ## Project Description
