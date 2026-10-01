@@ -126,7 +126,11 @@
           <% rooms.forEach(room => { %>
             <div class="col">
               <div class="card shadow-sm">
-                <img src="/placeholder.png" alt="<%= room.name %>">
+                <% if (room.image_url) { %>
+                  <img src="/<%= room.image_url %>" class="card-img-top" alt="<%= room.name %>">
+                <% } else { %>
+                    <img src="/placeholder.png" class="card-img-top" alt="No image available">
+                <% } %>
                 <div class="card-body">
                   <h5 class="card-title">
                       <%= room.name %>

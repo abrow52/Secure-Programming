@@ -10,19 +10,19 @@ INSERT INTO Users
 
 INSERT INTO Galleries
     (gallery_id, name, capacity, description, image_url) VALUES
-    (101, 'Animals', 30, 'A gallery about animals', 'animals.png'),
-    (102, 'Nature', 30, 'A gallery about nature', 'nature.png'),
-    (103, 'Food', 30, 'A gallery about food', 'food.png');
+    (101, 'Animals', 30, 'A gallery about animals', 'galleries/animals.png'),
+    (102, 'Nature', 30, 'A gallery about nature', 'galleries/nature.png'),
+    (103, 'Dessert', 30, 'A gallery about dessert', 'galleries/dessert.png');
 
 
 INSERT INTO Rooms
     (room_id, gallery_id, name, capacity, description, image_url) VALUES
-    (11, 101, 'Dogs', 15, 'A room of dog pictures', NULL),
-    (12, 101, 'Cats', 15, 'A room of cat pictures', NULL),
-    (13, 102, 'Flowers', 15, 'A room of flower pictures', NULL),
-    (14, 102, 'Trees', 15, 'A room of tree pictures', NULL),
-    (15, 103, 'Cake', 15, 'A room of cake pictures', NULL),
-    (16, 103, 'Cookies', 15, 'A room of cookie pictures', NULL);
+    (11, 101, 'Dogs', 15, 'A room of dog pictures', 'rooms/dogs.png'),
+    (12, 101, 'Cats', 15, 'A room of cat pictures', 'rooms/cats.png'),
+    (13, 102, 'Flowers', 15, 'A room of flower pictures', 'rooms/flowers.png'),
+    (14, 102, 'Trees', 15, 'A room of tree pictures', 'rooms/trees.png'),
+    (15, 103, 'Cake', 15, 'A room of cake pictures', 'rooms/cakes.png'),
+    (16, 103, 'Cookies', 15, 'A room of cookie pictures', 'rooms/cookies.png');
 
 
 INSERT INTO Paintings
@@ -60,20 +60,20 @@ INSERT INTO Paintings
     (1024, 14, 'Tree Picture 6', 'nature/trees/tree6.jpg'),
 
     -- Cake
-    (1025, 15, 'Cake Picture 1', 'food/cake/cake1.jpg'),
-    (1026, 15, 'Cake Picture 2', 'food/cake/cake2.jpg'),
-    (1027, 15, 'Cake Picture 3', 'food/cake/cake3.jpg'),
-    (1028, 15, 'Cake Picture 4', 'food/cake/cake4.jpg'),
-    (1029, 15, 'Cake Picture 5', 'food/cake/cake5.jpg'),
-    (1030, 15, 'Cake Picture 6', 'food/cake/cake6.jpg'),
+    (1025, 15, 'Cake Picture 1', 'Dessert/cake/cake1.jpg'),
+    (1026, 15, 'Cake Picture 2', 'Dessert/cake/cake2.jpg'),
+    (1027, 15, 'Cake Picture 3', 'Dessert/cake/cake3.jpg'),
+    (1028, 15, 'Cake Picture 4', 'Dessert/cake/cake4.jpg'),
+    (1029, 15, 'Cake Picture 5', 'Dessert/cake/cake5.jpg'),
+    (1030, 15, 'Cake Picture 6', 'Dessert/cake/cake6.jpg'),
 
     -- Cookie
-    (1031, 16, 'Cookie Picture 1', 'food/cookies/cookie1.jpg'),
-    (1032, 16, 'Cookie Picture 2', 'food/cookies/cookie2.jpg'),
-    (1033, 16, 'Cookie Picture 3', 'food/cookies/cookie3.jpg'),
-    (1034, 16, 'Cookie Picture 4', 'food/cookies/cookie4.jpg'),
-    (1035, 16, 'Cookie Picture 5', 'food/cookies/cookie5.jpg'),
-    (1036, 16, 'Cookie Picture 6', 'food/cookies/cookie6.jpg');
+    (1031, 16, 'Cookie Picture 1', 'Dessert/cookies/cookie1.jpg'),
+    (1032, 16, 'Cookie Picture 2', 'Dessert/cookies/cookie2.jpg'),
+    (1033, 16, 'Cookie Picture 3', 'Dessert/cookies/cookie3.jpg'),
+    (1034, 16, 'Cookie Picture 4', 'Dessert/cookies/cookie4.jpg'),
+    (1035, 16, 'Cookie Picture 5', 'Dessert/cookies/cookie5.jpg'),
+    (1036, 16, 'Cookie Picture 6', 'Dessert/cookies/cookie6.jpg');
 
 
 COMMIT;
