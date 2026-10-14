@@ -11,82 +11,10 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/album/" />
     <script src="../assets/js/color-modes.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="frontend/style.css" rel="stylesheet">
     <meta name="theme-color" content="#712cf9" />
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-      .b-example-divider {
-        width: 100%;
-        height: 3rem;
-        background-color: #0000001a;
-        border: solid rgba(0, 0, 0, 0.15);
-        border-width: 1px 0;
-        box-shadow:
-          inset 0 0.5em 1.5em #0000001a,
-          inset 0 0.125em 0.5em #00000026;
-      }
-      .b-example-vr {
-        flex-shrink: 0;
-        width: 1.5rem;
-        height: 100vh;
-      }
-      .bi {
-        vertical-align: -0.125em;
-        fill: currentColor;
-      }
-      .nav-scroller {
-        position: relative;
-        z-index: 2;
-        height: 2.75rem;
-        overflow-y: hidden;
-      }
-      .nav-scroller .nav {
-        display: flex;
-        flex-wrap: nowrap;
-        padding-bottom: 1rem;
-        margin-top: -1px;
-        overflow-x: auto;
-        text-align: center;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-      }
-      .btn-bd-primary {
-        --bd-violet-bg: #712cf9;
-        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-        --bs-btn-font-weight: 600;
-        --bs-btn-color: var(--bs-white);
-        --bs-btn-bg: var(--bd-violet-bg);
-        --bs-btn-border-color: var(--bd-violet-bg);
-        --bs-btn-hover-color: var(--bs-white);
-        --bs-btn-hover-bg: #6528e0;
-        --bs-btn-hover-border-color: #6528e0;
-        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-        --bs-btn-active-color: var(--bs-btn-hover-color);
-        --bs-btn-active-bg: #5a23c8;
-        --bs-btn-active-border-color: #5a23c8;
-      }
-      .bd-mode-toggle {
-        z-index: 1500;
-      }
-      .bd-mode-toggle .bi {
-        width: 1em;
-        height: 1em;
-      }
-      .bd-mode-toggle .dropdown-menu .active .bi {
-        display: block !important;
-      }
-    </style>
   </head>
+  
   <body>
     <header>
       <div class="navbar shadow-sm">
@@ -117,7 +45,9 @@
     <main>
       <div class="album py-5 bg-body-tertiary">
         <div class="container">
-            <table class="table table-striped table-bordered align-middle">
+          <div id="user-message" class="alert d-none" role="alert" aria-live="polite"></div>
+          <h2>Active Users</h2>
+            <table id="users-table" class="table table-striped table-bordered align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>ID</th>
@@ -134,52 +64,237 @@
                             <td><%= user.role %></td>
 
                             <td class="text-center" style="gap: 30px;">
-                                <a class="btn btn-sm btn-outline-secondary" href="/login">
-                                    <span class="material-icons">edit</span>
-                                </a>
-                                <a class="btn btn-sm btn-danger" href="/login">
-                                    <span class="material-icons">delete</span>
-                                </a>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-secondary edit-user-btn"
+                                    data-user-id="<%= user.user_id %>"
+                                    data-username="<%= user.username %>"
+                                    data-role="<%= user.role %>">
+                                    Edit
+                                </button>
+                                <form
+                                    action="/api/users/<%= user.user_id %>/delete"
+                                    method="POST"
+                                    class="delete-form"
+                                    style="display: inline;"
+                                >
+                                  <button type="submit" class="btn btn-sm btn-danger">
+                                    Delete
+                                  </button>
+                               </form>
                             </td>
                         </tr>
                     <% } %>
                 </tbody>
             </table>
 
-            <button onclick="unhide()" class="btn btn-primary">Add New User</button>
-            <div id="my-section" style="display: none; padding-top: 20px;">
+            <button onclick="unhideCreate()" class="btn btn-primary">Add New User</button>
+            <div id="create-section" style="display: none; padding-top: 20px;">
+                <h2>Add User</h2>
+                <form id="create-user-form" action="/api/users" method="POST">
+                  <table class="table table-striped table-bordered align-middle">
+                      <thead class="table-dark">
+                          <tr>
+                              <th>Username</th>
+                              <th>Password</th>
+                              <th>Role</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td><input id="new-username" class="form-control" type="text" name="username" maxlength="50" required></td>
+                              <td><input id="new-password" class="form-control" type="password" name="password" minlength="8" required></td>
+                              <td>
+                                <select id="new-role" name="role" class="form-select" required>
+                                  <option value="guest">Guest</option>
+                                  <option value="employee">Employee</option>
+                                  <option value="admin">Admin</option>
+                                </select>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  <div class="text-center" style="gap: 30px;">
+                    <button type="submit" class="btn btn-primary">
+                      Create User
+                    </button>
+                    <button type="button" onclick="hideCreate()" class="btn btn-danger">
+                        Cancel
+                    </button>
+                  </div>
+                </form>
+            </div>
+
+            <div id="edit-section" style="display: none; padding-top: 20px;">
+              <form id="edit-user-form" method="POST">
+                <h2>Edit User</h2>
                 <table class="table table-striped table-bordered align-middle">
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
                             <th>Username</th>
-                            <th>Password</th>
                             <th>Role</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input class="form-control" type="text" name="ID"></td>
-                            <td><input class="form-control" type="text" name="username"></td>
-                            <td><input class="form-control" type="text" name="password"></td>
-                            <td><select name="role" id="role">
-                                <option value="Guest">Guest</option>
-                                <option value="Employee">Employee</option>
-                                <option value="Admin">Admin</option>
-                              </select></td>
+                            <td><input id="edit-user-id" class="form-control" type="text" readonly></td>
+                            <td><input id="edit-username" class="form-control" type="text" readonly></td>
+                            <td>
+                              <select id="edit-role" name="role" class="form-select" required>
+                                <option value="guest">Guest</option>
+                                <option value="employee">Employee</option>
+                                <option value="admin">Admin</option>
+                              </select>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
+                <div class="text-center" style="gap: 30px;">
+                  <button type="submit" class="btn btn-primary">
+                      Save Changes
+                  </button>
+                  <button
+                      type="button"
+                      id="cancel-edit"
+                      class="btn btn-danger">
+                      Cancel
+                  </button>
+                </div>
+              </form>
+          </div>
         </div>
       </div>
     </main>
     <script class="astro-vvvwv3sm">
-        function unhide() {
-            var section = document.getElementById('my-section');
-            section.style.display = "block";
+        function unhideCreate() {
+            document.getElementById("create-section").style.display = "block";
         }
+        function hideCreate() {
+            document.getElementById("create-section").style.display = "none";
+        }
+
+        const editSection = document.getElementById("edit-section");
+        const editForm = document.getElementById("edit-user-form");
+
+        document.querySelectorAll(".edit-user-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const userId = button.dataset.userId;
+                const username = button.dataset.username;
+                const role = button.dataset.role.toLowerCase();
+
+                document.getElementById("edit-user-id").value = userId;
+                document.getElementById("edit-username").value = username;
+                document.getElementById("edit-role").value = role;
+
+                editForm.action = `/api/users/${encodeURIComponent(userId)}/role`;
+
+                editSection.style.display = "block";
+                editSection.scrollIntoView({ behavior: "smooth" });
+            });
+        });
+
+        document.getElementById("cancel-edit").addEventListener("click", () => {
+            editSection.style.display = "none";
+        });
+
+        const userMessage = document.getElementById("user-message");
+
+        function showUserMessage(message, success = false) {
+            userMessage.textContent = message;
+            userMessage.className = success
+                ? "alert alert-success"
+                : "alert alert-danger";
+
+            userMessage.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest"
+            });
+        }
+
+        async function submitUserForm(form, options = {}) {
+            try {
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    body: new URLSearchParams(new FormData(form))
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showUserMessage(data.message || "Request failed.");
+                    return false;
+                }
+
+                showUserMessage(data.message, true);
+
+                if (options.onSuccess) {
+                    options.onSuccess(data);
+                }
+
+                return true;
+            } catch (error) {
+                console.error("User request failed:", error);
+                showUserMessage("Something went wrong. Please try again.");
+                return false;
+            }
+        }
+
+        // delete user
+        document.querySelectorAll(".delete-form").forEach(form => {
+            form.addEventListener("submit", async event => {
+                event.preventDefault();
+
+                if (!confirm("Are you sure you want to delete this user?")) {
+                    return;
+                }
+
+                await submitUserForm(form, {
+                    onSuccess: () => {
+                        form.closest("tr").remove();
+                    }
+                });
+            });
+        });
+
+        // change user role
+        document.getElementById("edit-user-form")
+            .addEventListener("submit", async event => {
+                event.preventDefault();
+
+                const form = event.currentTarget;
+                const userId = document.getElementById("edit-user-id").value;
+                const newRole = document.getElementById("edit-role").value;
+
+                const success = await submitUserForm(form);
+
+                if (success) {
+                    // Update the displayed role in the table
+                    const row = [...document.querySelectorAll("#users-table tbody tr")]
+                        .find(row =>
+                            row.cells[0].textContent.trim() === userId
+                        );
+
+                    if (row) {
+                        row.cells[2].textContent = newRole;
+                    }
+
+                    document.getElementById("edit-section").style.display = "none";
+                }
+            });
+
+        // create user
+        document.getElementById("create-user-form")
+            .addEventListener("submit", async event => {
+                event.preventDefault();
+
+                const form = event.currentTarget;
+                const success = await submitUserForm(form);
+
+                if (success) {
+                    window.location.reload();
+                }
+            });
     </script>
-      
   </body>
 </html>
