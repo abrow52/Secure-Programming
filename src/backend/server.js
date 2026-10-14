@@ -54,6 +54,7 @@ app.get("/", async (req, res) => {
             ORDER BY gallery_id
         `);
         res.render("index", {
+            user: req.session.user || null,
             galleries: galleries
         });
     } catch (err) {
@@ -215,6 +216,7 @@ app.get("/users", requireRole("admin"), async (req, res) => {
         );
 
         res.render("users", {
+            user: req.session.user || null,
             Users: users
         });
 
