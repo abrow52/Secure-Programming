@@ -33,6 +33,9 @@
                 <% } %>
                 <% if (user && user.role === "admin") { %>
                   <li class="nav-item">
+                      <a class="nav-link" href="/audit">Audit Log</a>
+                  </li>                  
+                  <li class="nav-item">
                       <a class="nav-link" href="/users">Users</a>
                   </li>
                 <% } %>
@@ -77,9 +80,11 @@
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
                       <div class="btn-group">
-                        <a href="/galleries/<%= gallery.gallery_id %>" class="btn btn-sm btn-outline-secondary">
-                            Enter Gallery
-                        </a>
+                        <form method="post" action="/api/events/galleries/<%= gallery.gallery_id %>/enter">
+                          <button type="submit" class="btn btn-sm btn-outline-secondary">          
+                          Enter Gallery
+                          </button>
+                        </form>                         
                       </div>
                       <small class="text-body-secondary">
                         <p>Ocupancy:  </p>

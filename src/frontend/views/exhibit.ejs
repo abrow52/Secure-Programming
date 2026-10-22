@@ -19,13 +19,17 @@
     <header>
       <div class="navbar shadow-sm">
         <div class="container">
-          <a href="/" class="navbar-brand d-flex align-items-center">
+          <a href="/rooms/<%= room.room_id %>" class="navbar-brand d-flex align-items-center"></a>          
             <img style="width: 50px; height: auto;" src="/logo.svg">
             <strong>AA Galleries</strong>
           </a>
           <div>
             <ul style="display:flex; list-style-type: none; gap: 10px">
-                <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
+                <li class="nav-item">
+                  <form method="post" action="/api/events/rooms/<%= room.room_id %>/leave">
+                    <button type="submit" class="nav-link btn btn-link">Exit Room</button>
+                  </form>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
                 <% if (user && (user.role === "admin" || user.role === "employee")) { %>
                   <li class="nav-item">
@@ -33,6 +37,9 @@
                   </li>
                 <% } %>
                 <% if (user && user.role === "admin") { %>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/audit">Audit Log</a>
+                  </li>
                   <li class="nav-item">
                       <a class="nav-link" href="/users">Users</a>
                   </li>
@@ -46,7 +53,9 @@
       <div class="album py-4 bg-body-tertiary">
         <div class="container">
           <section class="py-4 text-center position-relative">
-            <a href="/galleries/<%= room.gallery_id %>" class="btn position-absolute start-0">&laquo; Exit Room</a>
+            <form method="post" action="/api/events/rooms/<%= room.room_id %>/leave" class="position-absolute start-0">
+              <button type="submit" class="btn">&laquo; Exit Room</button>
+            </form>             
                 <h1 class="fw-light">
                     <%= room.name %>
                 </h1>

@@ -87,6 +87,11 @@ app.get("/galleries/:galleryId", requireRole("admin", "employee", "guest"), asyn
                 "Invalid gallery ID"
             );
         }
+        const location = req.session.galleryLocation; // prevent user from accessing gallery through url
+        if (!location || location.galleryId !== galleryId || location.roomId !== null) {
+            return res.status(403).send("Enter this gallery before viewing it");
+        }
+
         //get gallery from db
         const [galleries] = await db.query(
             `
@@ -153,6 +158,11 @@ app.get("/rooms/:roomId", requireRole("admin", "employee", "guest"), async (req,
                 "Invalid room ID"
             );
         }
+        const location = req.session.galleryLocation; // prevent user from accessing room through url
+        if (!location || location.roomId !== roomId) {
+            return res.status(403).send("Enter this room before viewing it");
+        }
+
         //get room from db
         const [rooms] = await db.query(
             `
@@ -230,9 +240,51 @@ app.get("/users", requireRole("admin"), async (req, res) => {
 // Events Page
 //displays the list people who have entered/left galleries/rooms
 app.get("/events", requireRole("admin", "employee"), async (req, res) => {
-    res.render("events");
+//    res.render("events");
+    try {
+        const [galleryEvents] = await db.query(`
+            SELECT ge.event_id, u.username, g.name AS gallery_name,
+                   ge.type, ge.occurred_at
+            FROM GalleryEvents ge
+            JOIN Users u ON u.user_id = ge.user_id
+            JOIN Galleries g ON g.gallery_id = ge.gallery_id
+            ORDER BY ge.occurred_at DESC, ge.event_id DESC
+            LIMIT 100
+        `);
+        const [roomEvents] = await db.query(`
+            SELECT re.event_id, u.username, r.name AS room_name,
+                   g.name AS gallery_name, re.type, re.occurred_at
+            FROM RoomEvents re
+            JOIN Users u ON u.user_id = re.user_id
+            JOIN Rooms r ON r.room_id = re.room_id
+            JOIN Galleries g ON g.gallery_id = r.gallery_id
+            ORDER BY re.occurred_at DESC, re.event_id DESC
+            LIMIT 100
+        `);
+        return res.render("events", { galleryEvents, roomEvents });
+    } catch (err) {
+        console.error("Unable to load event history:", err);
+        return res.status(500).send("Unable to load event history");
+    }
 });
 
+app.get("/audit", requireRole("admin"), async (req, res) => {
+    try{
+            const [auditLogs] = await db.query(`
+            SELECT al.log_id, u.username, al.action, al.resource_type,
+                   al.resource_id, al.ip_address, al.occurred_at
+            FROM AuditLogs al
+            LEFT JOIN Users u ON u.user_id = al.user_id
+            ORDER BY al.occurred_at DESC, al.log_id DESC
+            LIMIT 100
+        `);
+
+        return res.render("audit", { auditLogs });
+    } catch (err) {
+        console.error("Unable to load audit log:", err);
+        return res.status(500).send("Unable to load audit log");
+    }
+});
 
 app.use("/api/users", userRoutes);
 app.use("/api/events", eventRoutes);
