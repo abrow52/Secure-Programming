@@ -28,20 +28,9 @@
                     <button type="submit" class="nav-link btn btn-link">Exit Gallery</button>
                   </form>
                 </li>                
-                <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
-                <% if (user && (user.role === "admin" || user.role === "employee")) { %>
-                  <li class="nav-item">
-                      <a class="nav-link" href="/events">Events</a>
-                  </li>
-                <% } %>
-                <% if (user && user.role === "admin") { %>
-                  <li class="nav-item">
-                      <a class="nav-link" href="/audit">Audit Log</a>
-                  </li>                  
-                  <li class="nav-item">
-                      <a class="nav-link" href="/users">Users</a>
-                  </li>
-                <% } %>
+                <li>
+                  <form action="/api/auth/logout" method="POST"><button type="submit" style="border:none; background:none; padding: 0;">Logout</button></form>
+                </li>
             </ul>
           </div>
         </div>

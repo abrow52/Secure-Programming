@@ -51,6 +51,20 @@ router.post("/login", async (req, res) => {
     }
 });
 
+// Logout
+router.post("/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Logout error:", err);
+            return res.status(500).send("Unable to log out");
+        }
+
+        res.clearCookie("connect.sid");
+        console.log(`User logged out`);
+        res.redirect("/login");
+    });
+});
+
 //check the role of the user
 function requireRole(...allowedRoles)  {
     return (req, res, next) => {

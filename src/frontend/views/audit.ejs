@@ -26,7 +26,9 @@
           <div>
             <ul style="display:flex; list-style-type: none; gap: 10px">
                 <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
+                <li>
+                  <form action="/api/auth/logout" method="POST"><button type="submit" style="border:none; background:none; padding: 0;">Logout</button></form>
+                </li>
                 <% if (user && (user.role === "admin" || user.role === "employee")) { %>
                   <li class="nav-item">
                       <a class="nav-link" href="/events">Events</a>
