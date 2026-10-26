@@ -162,11 +162,14 @@ CREATE TABLE AuditLogs (
     log_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NULL,
     action VARCHAR(100) NOT NULL,
+    resource_type VARCHAR(20) NULL, -- Object type, gallery or room
+    resource_id INT NUll, -- Primary key, gallery_id or room_id 
     ip_address VARCHAR(45) NULL,
     occurred_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (log_id),
     KEY idx_audit_logs_user_id (user_id),
+    KEY idx_audit_logs_resource (resource_type, resource_id),
     KEY idx_audit_logs_occurred_at (occurred_at),
 
     CONSTRAINT fk_audit_logs_user
