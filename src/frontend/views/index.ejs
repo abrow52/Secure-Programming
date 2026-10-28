@@ -18,16 +18,21 @@
     <header>
       <div class="navbar shadow-sm">
         <div class="container">
-          <a href="/" class="navbar-brand d-flex align-items-center">
+          <a class="navbar-brand d-flex align-items-center">
             <img style="width: 50px; height: auto;" src="/logo.svg">
             <strong>AA Galleries</strong>
           </a>
           <div>
             <ul style="display:flex; list-style-type: none; gap: 10px">
                 <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
-                <li>
-                  <form action="/api/auth/logout" method="POST"><button type="submit" style="border:none; background:none; padding: 0;">Logout</button></form>
-                </li>
+                <% if (!user) { %>
+                  <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
+                <% } %>
+                <% if (user && user.role) { %>
+                  <li>
+                    <form action="/api/auth/logout" method="POST"><button type="submit" style="border:none; background:none; padding: 0;">Logout</button></form>
+                  </li>
+                <% } %>
                 <% if (user && (user.role === "admin" || user.role === "employee")) { %>
                   <li class="nav-item">
                       <a class="nav-link" href="/events">Events</a>
@@ -36,7 +41,7 @@
                 <% if (user && user.role === "admin") { %>
                   <li class="nav-item">
                       <a class="nav-link" href="/audit">Audit Log</a>
-                  </li>                  
+                  </li>                    
                   <li class="nav-item">
                       <a class="nav-link" href="/users">Users</a>
                   </li>
@@ -82,16 +87,17 @@
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
                       <div class="btn-group">
-                        <form method="post" action="/api/events/galleries/<%= gallery.gallery_id %>/enter">
+                        <form data-enter-gallery method="post" action="/api/events/galleries/<%= gallery.gallery_id %>/enter">
                           <button type="submit" class="btn btn-sm btn-outline-secondary">          
                           Enter Gallery
                           </button>
                         </form>                         
                       </div>
-                      <small class="text-body-secondary">
-                        <p>Ocupancy:  </p>
-                        <!-- <%= gallery.capacity %> -->
-                      </small>
+                      <% if (user && (user.role === "admin" || user.role === "employee")) { %>
+                        <small class="text-body-secondary">
+                          <p> Occupants: <%= gallery.occupantCount %> </p>
+                        </small>
+                      <% } %>
                     </div>
                   </div>
                 </div>
@@ -102,9 +108,94 @@
         <% } %>
       </div>
     </main>
-    <script
-      src="../assets/dist/js/bootstrap.bundle.min.js"
-      class="astro-vvvwv3sm"
-    ></script>
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"class="astro-vvvwv3sm"></script>
+    <script>
+      let reconcilingHistory = false;
+
+      async function reconcileHomeHistory() {
+        const marker = history.state?.galleryHistoryMarker;
+
+        if (!marker || reconcilingHistory) return;
+
+        reconcilingHistory = true;
+
+        try {
+          const response = await fetch("/api/events/history/reconcile", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            cache: "no-store",
+            body: JSON.stringify({
+              marker: marker,
+              destination: "/"
+            })
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok || !data.ok) {
+            console.error("History reconciliation failed:", data);
+            reconcilingHistory = false;
+            return;
+          }
+
+          // remove the marker before reloading the page so the so the same request isn't submitted
+          const newState = { ...(history.state || {}) };
+          delete newState.galleryHistoryMarker;
+
+          history.replaceState(newState, "", window.location.href);
+          window.location.reload();
+        } catch (error) {
+          console.error("Unable to reconcile home-page history:", error);
+          reconcilingHistory = false;
+        }
+      }
+
+      window.addEventListener("popstate", reconcileHomeHistory);
+      window.addEventListener("pageshow", reconcileHomeHistory);
+    </script>
+    <script>
+      document.querySelectorAll("form[data-enter-gallery]").forEach((form) => {
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+      
+          try {
+            const response = await fetch(form.action, {
+              method: "POST",
+              headers: {
+                Accept: "application/json"
+              },
+              credentials: "same-origin"
+            });
+      
+            const data = await response.json();
+      
+            if (!response.ok) {
+              alert(data.error || "Unable to enter gallery");
+              return;
+            }
+      
+            // mark home page before leaving
+            history.replaceState(
+              {
+                ...(history.state || {}),
+                galleryHistoryMarker: data.marker
+              },
+              "",
+              window.location.href
+            );
+      
+            window.location.href = data.redirect;
+          } catch (error) {
+            console.error("Enter Gallery failed:", error);
+            alert("Unable to enter gallery. Please try again.");
+          }
+        });
+      });
+    </script>
+  
   </body>
 </html>

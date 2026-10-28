@@ -7,20 +7,17 @@
 
 ## Download and Deployment
 ### Installation
-Download the repository to your machine
-### Terminal Commands
-- npm install express
-- npm install express-session
-- npm install node
+Download the repository
 ### Running (local host)
-Navigate to the backend directory (Secure-Programming/src/backend)
-- In the terminal, type: node server.js
+In terminal type: 
+- cp .env.example .env
+- docker compose up --build
 
-Enter the given link into a browser to access the site (http://localhost:3000/)
+Enter the host link into a browser to access the site (http://localhost:3000/) or click the link in the container on Docker Desktop
 
 ## Project Description
 
-Brief description of the application.
+A secure art gallery application that lets users view exhibits and users with higher access to view/edit privileged information.
 
 ## Technology Stack
 
@@ -45,7 +42,7 @@ Browser → Backend/API → Database
 
 ## User Roles:
 - Guests, Employees, and Admins - Browse the galleries
-- Employees & Admins - Record gallery events
+- Employees & Admins - View gallery events and view gallery/rom occupancy
 - Admins - Edit, create, and delete users
 
 ## Testing: 

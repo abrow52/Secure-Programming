@@ -19,17 +19,12 @@
     <header>
       <div class="navbar shadow-sm">
         <div class="container">
-          <a href="/rooms/<%= room.room_id %>" class="navbar-brand d-flex align-items-center"></a>          
+          <a class="navbar-brand d-flex align-items-center">      
             <img style="width: 50px; height: auto;" src="/logo.svg">
             <strong>AA Galleries</strong>
           </a>
           <div>
             <ul style="display:flex; list-style-type: none; gap: 10px">
-                <li class="nav-item">
-                  <form method="post" action="/api/events/rooms/<%= room.room_id %>/leave">
-                    <button type="submit" class="nav-link btn btn-link">Exit Room</button>
-                  </form>
-                </li>
                 <li>
                   <form action="/api/auth/logout" method="POST"><button type="submit" style="border:none; background:none; padding: 0;">Logout</button></form>
                 </li>
@@ -66,9 +61,76 @@
         </div>
       </div>
     </main>
-    <script
-      src="../assets/dist/js/bootstrap.bundle.min.js"
-      class="astro-vvvwv3sm"
-    ></script>
+    <script src="../assets/dist/js/bootstrap.bundle.min.js" class="astro-vvvwv3sm">
+    </script>
+    <script>
+      window.addEventListener("pageshow", async function (event) {
+        if (!event.persisted) return;
+    
+        const marker = history.state?.galleryHistoryMarker;
+        if (!marker) return;
+    
+        try {
+          const response = await fetch("/api/events/history/reconcile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            cache: "no-store",
+            body: JSON.stringify({
+              marker,
+              destination: window.location.pathname
+            })
+          });
+    
+          if (!response.ok) {
+            window.location.replace("/");
+            return;
+          }
+    
+          window.location.reload();
+        } catch {
+          window.location.replace("/");
+        }
+      });
+    </script>
+    <script>
+      async function reconcileHistoryLocation() {
+          const marker = history.state?.galleryHistoryMarker;
+      
+          if (!marker) return;
+      
+          const destination = window.location.pathname;
+      
+          try {
+              const response = await fetch("/api/events/history/reconcile", {
+                  method: "POST",
+                  credentials: "same-origin",
+                  headers: {
+                      "Content-Type": "application/json",
+                      "Accept": "application/json"
+                  },
+                  body: JSON.stringify({ marker, destination })
+              });
+      
+              if (!response.ok) {
+                  window.location.replace("/");
+                  return;
+              }
+      
+              // get fresh content after occupancy changes.
+              window.location.reload();
+          } catch {
+              window.location.replace("/");
+          }
+      }
+      
+      window.addEventListener("popstate", reconcileHistoryLocation);
+      
+      window.addEventListener("pageshow", (event) => {
+          if (event.persisted) {
+              reconcileHistoryLocation();
+          }
+      });
+    </script>
   </body>
 </html>
