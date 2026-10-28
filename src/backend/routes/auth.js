@@ -182,10 +182,7 @@ function requireRole(...allowedRoles) {
                 );
             }
 
-            return res.status(403).send("Access denied");
-            // return res.status(403).render("access-denied", {
-            //     message: "You do not have permission to access this page."
-            // });
+            return res.status(403).send("You do not have permission to access this page.");
         }
 
         next();
@@ -209,12 +206,7 @@ async function requireOutsideGallery(req, res, next) {
 
         const occupancy = rows[0];
 
-        if (
-            occupancy &&
-            (
-                occupancy.gallery_id != null ||
-                occupancy.room_id != null
-            )
+        if (occupancy && (occupancy.gallery_id != null || occupancy.room_id != null)
         ) {
             return res.status(403).send("Access denied. Leave your current room and gallery first.");
         }
