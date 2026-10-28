@@ -6,22 +6,40 @@ const db = require("./database");
 
 //setup routes
 const userRoutes = require("./routes/users");
-const eventRoutes = require("./routes/events");
-const { router: authRoutes, requireRole } = require("./routes/auth");
+const {router: eventRoutes, getOccupancy} = require("./routes/events");
+const { router: authRoutes, requireRole, requireOutsideGallery } = require("./routes/auth");
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+//start server
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 
 //set session
+if (process.env.NODE_ENV === 'production') {app.set('trust proxy', 1);}
 app.use(session({
-    secret: "your-secret-key",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: false,
-        maxAge: 1000 * 60 * 60 // 1 hour
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60
     }
 }));
+
+app.use((req, res, next) => {
+    res.set({
+        "Cache-Control": "no-store, no-cache, must-revalidate, private",
+        "Pragma": "no-cache",
+        "Expires": "0"
+    });
+
+    next();
+});
 
 //confgiure path to ejs files
 app.set("view engine", "ejs");
@@ -40,22 +58,42 @@ app.use(express.static(path.join(__dirname, "..", "images")));
 
 
 // Home page
-//Render the home page and display galleries from db (make it so you need access to see)
+//Render the home page and display galleries from db
 app.get("/", async (req, res) => {
     try {
         const [galleries] = await db.query(`
             SELECT
-                gallery_id,
-                name,
-                capacity,
-                description,
-                image_url
-            FROM Galleries
-            ORDER BY gallery_id
+                g.gallery_id,
+                g.name,
+                g.description,
+                g.image_url,
+                COUNT(uo.user_id) AS occupantCount
+            FROM Galleries g
+            LEFT JOIN UserOccupancy uo
+                ON uo.gallery_id = g.gallery_id
+            GROUP BY
+                g.gallery_id,
+                g.name,
+                g.description,
+                g.image_url
+            ORDER BY g.gallery_id
         `);
+        let occupancy = {
+            gallery_id: null,
+            room_id: null
+        };
+        if (req.session.user) {
+            occupancy = await getOccupancy(
+                req.session.user.user_id
+            );
+        }
+
+        res.set("Cache-Control", "no-store");
+
         res.render("index", {
             user: req.session.user || null,
-            galleries: galleries
+            galleries: galleries,
+            occupancy
         });
     } catch (err) {
         console.error(err);
@@ -87,8 +125,11 @@ app.get("/galleries/:galleryId", requireRole("admin", "employee", "guest"), asyn
                 "Invalid gallery ID"
             );
         }
-        const location = req.session.galleryLocation; // prevent user from accessing gallery through url
-        if (!location || location.galleryId !== galleryId || location.roomId !== null) {
+        const occupancy = await getOccupancy(
+            req.session.user.user_id
+        );
+        
+        if (Number(occupancy.gallery_id) !== galleryId ) { // prevent user from accessing gallery through url
             return res.status(403).send("Enter this gallery before viewing it");
         }
 
@@ -98,7 +139,6 @@ app.get("/galleries/:galleryId", requireRole("admin", "employee", "guest"), asyn
             SELECT
                 gallery_id,
                 name,
-                capacity,
                 description,
                 image_url
             FROM Galleries
@@ -119,22 +159,43 @@ app.get("/galleries/:galleryId", requireRole("admin", "employee", "guest"), asyn
         const [rooms] = await db.query(
             `
             SELECT
-                room_id,
-                gallery_id,
-                name,
-                capacity,
-                description,
-                image_url
-            FROM Rooms
-            WHERE gallery_id = ?
-            ORDER BY room_id
+                r.room_id,
+                r.gallery_id,
+                r.name,
+                r.description,
+                r.image_url,
+                COUNT(uo.user_id) AS occupantCount
+            FROM Rooms r
+            LEFT JOIN UserOccupancy uo
+                ON uo.room_id = r.room_id
+            WHERE r.gallery_id = ?
+            GROUP BY
+                r.room_id,
+                r.gallery_id,
+                r.name,
+                r.description,
+                r.image_url
+            ORDER BY r.room_id
             `,
             [galleryId]
         );
 
+        const [countRows] = await db.query(
+            `SELECT COUNT(*) AS occupant_count
+             FROM UserOccupancy
+             WHERE gallery_id = ?`,
+            [galleryId]
+        );
+        
+        const occupantCount = countRows[0].occupant_count;
+        
+        res.set("Cache-Control", "no-store");
+
         res.render("rooms", {
             gallery,
-            rooms
+            rooms,
+            occupancy,
+            occupantCount
         });
 
     } catch (err) {
@@ -158,10 +219,7 @@ app.get("/rooms/:roomId", requireRole("admin", "employee", "guest"), async (req,
                 "Invalid room ID"
             );
         }
-        const location = req.session.galleryLocation; // prevent user from accessing room through url
-        if (!location || location.roomId !== roomId) {
-            return res.status(403).send("Enter this room before viewing it");
-        }
+        const occupancy = await getOccupancy(req.session.user.user_id); 
 
         //get room from db
         const [rooms] = await db.query(
@@ -170,7 +228,6 @@ app.get("/rooms/:roomId", requireRole("admin", "employee", "guest"), async (req,
                 room_id,
                 gallery_id,
                 name,
-                capacity,
                 description,
                 image_url
             FROM Rooms
@@ -186,6 +243,9 @@ app.get("/rooms/:roomId", requireRole("admin", "employee", "guest"), async (req,
         }
 
         const room = rooms[0];
+        if (Number(occupancy.room_id) !== roomId || Number(occupancy.gallery_id) !== Number(room.gallery_id)) { // prevent user from accessing room through url
+            return res.status(403).send( "Leave your current room or gallery first.");
+        }
 
         //get paintings from db
         const [paintings] = await db.query(
@@ -202,9 +262,22 @@ app.get("/rooms/:roomId", requireRole("admin", "employee", "guest"), async (req,
             [roomId]
         );
 
+        const [countRows] = await db.query(
+            `SELECT COUNT(*) AS occupant_count
+             FROM UserOccupancy
+             WHERE room_id = ?`,
+            [roomId]
+        );
+        
+        const occupantCount = countRows[0].occupant_count;
+        
+        res.set("Cache-Control", "no-store");
+
         res.render("exhibit", {
             room,
-            paintings
+            paintings,
+            occupancy,
+            occupantCount
         });
 
     } catch (err) {
@@ -219,7 +292,7 @@ app.get("/rooms/:roomId", requireRole("admin", "employee", "guest"), async (req,
 
 // Users Page
 //lists users in the db
-app.get("/users", requireRole("admin"), async (req, res) => {
+app.get("/users", requireRole("admin"), requireOutsideGallery, async (req, res) => {
     try {
         const [users] = await db.query(
             "SELECT user_id, username, role FROM Users"
@@ -239,8 +312,7 @@ app.get("/users", requireRole("admin"), async (req, res) => {
 
 // Events Page
 //displays the list people who have entered/left galleries/rooms
-app.get("/events", requireRole("admin", "employee"), async (req, res) => {
-//    res.render("events");
+app.get("/events", requireRole("admin", "employee"), requireOutsideGallery, async (req, res) => {
     try {
         const [galleryEvents] = await db.query(`
             SELECT ge.event_id, u.username, g.name AS gallery_name,
@@ -268,29 +340,74 @@ app.get("/events", requireRole("admin", "employee"), async (req, res) => {
     }
 });
 
-app.get("/audit", requireRole("admin"), async (req, res) => {
-    try{
-            const [auditLogs] = await db.query(`
+app.get("/audit", requireRole("admin"), requireOutsideGallery, async (req, res) => {
+        // get filter values
+        const getFilter = (value) => {
+            if (value === undefined) return "";
+
+            if (typeof value !== "string" || value.length > 100) {
+                return null;
+            }
+
+            return value.trim();
+        };
+
+        const filters = {
+            user: getFilter(req.query.user),
+            action: getFilter(req.query.action),
+            ip: getFilter(req.query.ip)
+        };
+
+        if (Object.values(filters).some(v => v === null)) {
+            return res.status(400).send("Invalid filter parameters");
+        }
+
+    try {
+        let sql = `
             SELECT al.log_id, u.username, al.action, al.resource_type,
                    al.resource_id, al.ip_address, al.occurred_at
             FROM AuditLogs al
             LEFT JOIN Users u ON u.user_id = al.user_id
-            ORDER BY al.occurred_at DESC, al.log_id DESC
-            LIMIT 100
-        `);
+            WHERE 1 = 1
+        `;
 
-        return res.render("audit", { auditLogs });
+        const params = [];
+
+        // filter by username
+        if (filters.user) {
+            sql += " AND u.username LIKE ?";
+            params.push(`%${filters.user}%`);
+        }
+
+        // filter by action
+        if (filters.action) {
+            sql += " AND al.action LIKE ?";
+            params.push(`%${filters.action}%`);
+        }
+
+        // filter by IP address
+        if (filters.ip) {
+            sql += " AND al.ip_address LIKE ?";
+            params.push(`%${filters.ip}%`);
+        }
+
+        // show logs newest to oldest
+        sql += " ORDER BY al.occurred_at DESC, al.log_id DESC LIMIT 100";
+
+        const [auditLogs] = await db.query(sql, params);
+
+        return res.render("audit", {
+            auditLogs,
+            filters,
+            user: req.session.user
+        });
     } catch (err) {
         console.error("Unable to load audit log:", err);
         return res.status(500).send("Unable to load audit log");
     }
 });
 
+
 app.use("/api/users", userRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/auth", authRoutes);
-
-//start server
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
-});

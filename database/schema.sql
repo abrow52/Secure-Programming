@@ -34,14 +34,11 @@ CREATE TABLE Users (
 CREATE TABLE Galleries (
     gallery_id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
-    capacity INT NOT NULL,
     description VARCHAR(255) NULL,
     image_url VARCHAR(2048) NULL,
 
-    PRIMARY KEY (gallery_id),
+    PRIMARY KEY (gallery_id)
 
-    CONSTRAINT chk_galleries_capacity
-        CHECK (capacity > 0)
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_general_ci;
@@ -51,7 +48,6 @@ CREATE TABLE Rooms (
     room_id INT NOT NULL AUTO_INCREMENT,
     gallery_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
-    capacity INT NOT NULL,
     description VARCHAR(255) NULL,
     image_url VARCHAR(2048) NULL,
 
@@ -62,10 +58,8 @@ CREATE TABLE Rooms (
         FOREIGN KEY (gallery_id)
         REFERENCES Galleries (gallery_id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE
 
-    CONSTRAINT chk_rooms_capacity
-        CHECK (capacity > 0)
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_general_ci;
@@ -163,7 +157,7 @@ CREATE TABLE AuditLogs (
     user_id INT NULL,
     action VARCHAR(100) NOT NULL,
     resource_type VARCHAR(20) NULL, -- Object type, gallery or room
-    resource_id INT NUll, -- Primary key, gallery_id or room_id 
+    resource_id INT NULL, -- Primary key, gallery_id or room_id 
     ip_address VARCHAR(45) NULL,
     occurred_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -181,5 +175,17 @@ CREATE TABLE AuditLogs (
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_general_ci;
 
+
+CREATE TABLE UserOccupancy (
+    user_id INT PRIMARY KEY,
+    gallery_id INT NULL,
+    room_id INT NULL,
+    FOREIGN KEY (user_id)
+        REFERENCES Users(user_id),
+    FOREIGN KEY (gallery_id)
+        REFERENCES Galleries(gallery_id),
+    FOREIGN KEY (room_id)
+        REFERENCES Rooms(room_id)
+);
 
 COMMIT;

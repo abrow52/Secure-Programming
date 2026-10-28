@@ -18,14 +18,16 @@
     <header>
       <div class="navbar shadow-sm">
         <div class="container">
-          <a href="/" class="navbar-brand d-flex align-items-center">
+          <a class="navbar-brand d-flex align-items-center">
             <img style="width: 50px; height: auto;" src="/logo.svg">
             <strong>AA Galleries</strong>
           </a>
           <div>
             <ul style="display:flex; list-style-type: none; gap: 10px">
                 <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
+                <li>
+                  <form action="/api/auth/logout" method="POST"><button type="submit" style="border:none; background:none; padding: 0;">Logout</button></form>
+                </li>
                 <% if (user && (user.role === "admin" || user.role === "employee")) { %>
                   <li class="nav-item">
                       <a class="nav-link" href="/events">Events</a>
@@ -45,7 +47,7 @@
       </div>
     </header>
     <main class="container py-4">
-      <h1>Gallery and Room Events</h1>
+      <h1 style="text-align: center;">Gallery and Room Events</h1>
 
       <section class="mt-4">
         <h2>Gallery events</h2>

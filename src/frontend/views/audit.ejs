@@ -19,14 +19,16 @@
     <header>
       <div class="navbar shadow-sm">
         <div class="container">
-          <a href="/" class="navbar-brand d-flex align-items-center">
+          <a class="navbar-brand d-flex align-items-center">
             <img style="width: 50px; height: auto;" src="/logo.svg">
             <strong>AA Galleries</strong>
           </a>
           <div>
             <ul style="display:flex; list-style-type: none; gap: 10px">
                 <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
+                <li>
+                  <form action="/api/auth/logout" method="POST"><button type="submit" style="border:none; background:none; padding: 0;">Logout</button></form>
+                </li>
                 <% if (user && (user.role === "admin" || user.role === "employee")) { %>
                   <li class="nav-item">
                       <a class="nav-link" href="/events">Events</a>
@@ -46,10 +48,52 @@
       </div>
     </header>
     <main class="container py-4">
-      <h1>Audit Log</h1>
+      <h1 style="text-align: center;">Audit Log</h1>
 
-      <section class="mt-4">
-        <h2>Audit log</h2>
+      <section class="mt-4">        
+        <form action="/audit" method="GET" class="row g-3 mb-4">
+          <div class="col-md-3">
+            <label for="userFilter" class="form-label">User</label>
+            <input
+              type="text"
+              class="form-control"
+              id="userFilter"
+              name="user"
+              placeholder="Search username"
+              value="<%= filters.user %>"
+            >
+          </div>
+
+          <div class="col-md-3">
+            <label for="actionFilter" class="form-label">Action</label>
+            <input
+              type="text"
+              class="form-control"
+              id="actionFilter"
+              name="action"
+              placeholder="e.g. LOGIN_SUCCESS"
+              value="<%= filters.action %>"
+            >
+          </div>
+
+          <div class="col-md-3">
+            <label for="ipFilter" class="form-label">IP Address</label>
+            <input
+              type="text"
+              class="form-control"
+              id="ipFilter"
+              name="ip"
+              placeholder="Search IP address"
+              value="<%= filters.ip %>"
+            >
+          </div>
+
+          <div class="col-md-3 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="/audit" class="btn btn-outline-secondary">Clear</a>
+          </div>
+        </form>
+
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>

@@ -5,24 +5,24 @@ INSERT INTO Users
     (user_id, username, password_hash, role, created_by, created_at) VALUES
     (1, 'pparker', '$2b$10$Tb45AiuCqRvHESi9N701SeZDCtfRLTyOtgwLo.0N3/rlziu2iPCt6', 'admin', NULL, '2026-09-18 21:52:36'),
     (2, 'srodgers', '$2b$10$lP5H0NOmu/SU/w72ikIA0e.gvhQNUYSGUiW.n/gFG59rpVweIeiNK', 'employee', 1, '2026-09-19 21:52:36'),
-    (3, 'sstrange', '$2b$10$zLL/u17VWxBSXvj/mFCdverMCCbe0w/wlle6CHF1l1ksBKJI7Vu02', 'guest', 2, '2026-09-21 21:52:36');
+    (3, 'sstrange', '$2b$10$zLL/u17VWxBSXvj/mFCdverMCCbe0w/wlle6CHF1l1ksBKJI7Vu02', 'guest', 1, '2026-09-21 21:52:36');
 
 
 INSERT INTO Galleries
-    (gallery_id, name, capacity, description, image_url) VALUES
-    (101, 'Animals', 30, 'A gallery about animals', 'galleries/animals.png'),
-    (102, 'Nature', 30, 'A gallery about nature', 'galleries/nature.png'),
-    (103, 'Dessert', 30, 'A gallery about dessert', 'galleries/dessert.png');
+    (gallery_id, name, description, image_url) VALUES
+    (101, 'Animals', 'A gallery about animals', 'galleries/animals.png'),
+    (102, 'Nature', 'A gallery about nature', 'galleries/nature.png'),
+    (103, 'Dessert', 'A gallery about dessert', 'galleries/dessert.png');
 
 
 INSERT INTO Rooms
-    (room_id, gallery_id, name, capacity, description, image_url) VALUES
-    (11, 101, 'Dogs', 15, 'A room of dog pictures', 'rooms/dogs.png'),
-    (12, 101, 'Cats', 15, 'A room of cat pictures', 'rooms/cats.png'),
-    (13, 102, 'Flowers', 15, 'A room of flower pictures', 'rooms/flowers.png'),
-    (14, 102, 'Trees', 15, 'A room of tree pictures', 'rooms/trees.png'),
-    (15, 103, 'Cake', 15, 'A room of cake pictures', 'rooms/cakes.png'),
-    (16, 103, 'Cookies', 15, 'A room of cookie pictures', 'rooms/cookies.png');
+    (room_id, gallery_id, name, description, image_url) VALUES
+    (11, 101, 'Dogs', 'A room of dog pictures', 'rooms/dogs.png'),
+    (12, 101, 'Cats', 'A room of cat pictures', 'rooms/cats.png'),
+    (13, 102, 'Flowers', 'A room of flower pictures', 'rooms/flowers.png'),
+    (14, 102, 'Trees', 'A room of tree pictures', 'rooms/trees.png'),
+    (15, 103, 'Cake', 'A room of cake pictures', 'rooms/cakes.png'),
+    (16, 103, 'Cookies', 'A room of cookie pictures', 'rooms/cookies.png');
 
 
 INSERT INTO Paintings

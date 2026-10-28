@@ -18,30 +18,15 @@
     <header>
       <div class="navbar shadow-sm">
         <div class="container">
+          <a class="navbar-brand d-flex align-items-center">
             <img style="width: 50px; height: auto;" src="/logo.svg">
             <strong>AA Galleries</strong>
           </a>
           <div>
             <ul style="display:flex; list-style-type: none; gap: 10px">
-                <li class="nav-item">
-                  <form method="post" action="/api/events/galleries/<%= gallery.gallery_id %>/leave">
-                    <button type="submit" class="nav-link btn btn-link">Exit Gallery</button>
-                  </form>
-                </li>                
-                <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
-                <% if (user && (user.role === "admin" || user.role === "employee")) { %>
-                  <li class="nav-item">
-                      <a class="nav-link" href="/events">Events</a>
-                  </li>
-                <% } %>
-                <% if (user && user.role === "admin") { %>
-                  <li class="nav-item">
-                      <a class="nav-link" href="/audit">Audit Log</a>
-                  </li>                  
-                  <li class="nav-item">
-                      <a class="nav-link" href="/users">Users</a>
-                  </li>
-                <% } %>
+                <li>
+                  <form action="/api/auth/logout" method="POST"><button type="submit" style="border:none; background:none; padding: 0;">Logout</button></form>
+                </li>
             </ul>
           </div>
         </div>
@@ -76,16 +61,17 @@
                   </p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                      <form method="post" action="/api/events/rooms/<%= room.room_id %>/enter">
+                      <form data-enter-room method="post" action="/api/events/rooms/<%= room.room_id %>/enter">
                         <button type="submit" class="btn btn-sm btn-outline-secondary">
-                      Enter Room
+                          Enter Room
                         </button>
                       </form>                      
                     </div>
-                    <small class="text-body-secondary">
-                      <p>Ocupancy:  </p>
-                        <!-- <%= room.capacity %> -->
-                    </small>
+                    <% if (user && (user.role === "admin" || user.role === "employee")) { %>
+                      <small class="text-body-secondary">
+                        <p> Occupants: <%= gallery.occupantCount %> </p>
+                      </small>
+                    <% } %>
                   </div>
                 </div>
               </div>
@@ -94,9 +80,95 @@
         </div>
       </div>
     </main>
-    <script
-      src="../assets/dist/js/bootstrap.bundle.min.js"
-      class="astro-vvvwv3sm"
-    ></script>
+    <script src="../assets/dist/js/bootstrap.bundle.min.js" class="astro-vvvwv3sm"></script>
+    <script>
+      document.querySelectorAll('form[data-enter-room]').forEach((form) => {
+          form.addEventListener("submit", async (event) => {
+              event.preventDefault();
+      
+              try {
+                  const response = await fetch(form.action, {
+                      method: "POST",
+                      credentials: "same-origin",
+                      headers: { "Accept": "application/json" }
+                  });
+      
+                  const data = await response.json();
+      
+                  if (!response.ok) {
+                      alert(data.error || "Unable to enter room");
+                      return;
+                  }
+      
+                  // Store the marker on both relevant history entries.
+                  history.replaceState(
+                      { ...(history.state || {}), galleryHistoryMarker: data.marker },
+                      "",
+                      window.location.pathname
+                  );
+      
+                  history.pushState(
+                      { galleryHistoryMarker: data.marker },
+                      "",
+                      `/rooms/${data.roomId}`
+                  );
+      
+                  window.location.reload();
+              } catch {
+                  alert("Unable to enter room");
+              }
+          });
+      });
+    </script>
+    <script>
+      let reconcilingHistory = false;
+
+      async function reconcileHistoryLocation() {
+        if (reconcilingHistory) return;
+
+        const marker = history.state?.galleryHistoryMarker;
+        if (!marker) return;
+
+        reconcilingHistory = true;
+
+        try {
+          const response = await fetch("/api/events/history/reconcile", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            cache: "no-store",
+            body: JSON.stringify({
+              marker,
+              destination: window.location.pathname
+            })
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok || !data.ok) {
+            console.error("History reconciliation failed:", data);
+            window.location.replace("/");
+            return;
+          }
+
+          // make sure the same history entry isn't repeated.
+          const newState = { ...(history.state || {}) };
+          delete newState.galleryHistoryMarker;
+
+          history.replaceState(newState, "", window.location.href);
+          window.location.reload();
+        } catch (error) {
+          console.error("History reconciliation error:", error);
+          window.location.replace("/");
+        }
+      }
+
+      window.addEventListener("popstate", reconcileHistoryLocation);
+      window.addEventListener("pageshow", reconcileHistoryLocation);
+    </script>
+
   </body>
 </html>
