@@ -15,7 +15,7 @@ Download the repository
 ### Database Setup
 Docker will create and seed the database when building the container
 
-### Running (local host)
+### Deployment
 In terminal type: 
 - cp .env.example .env
 - docker compose up --build
@@ -28,7 +28,7 @@ Enter the host link into a browser to access the site (http://localhost:3000/) o
 - Backend: Node, Express
 - Database: MySQL
 - Authentication: Express sessions/cookies
-- Deployment: Docker / Render
+- Deployment: Docker Compose
 
 ## Architecture
 
@@ -43,10 +43,16 @@ Browser → Backend/API → Database
 Authentication
 * Get - "/api/auth/login"
 * Post - "/api/auth/login", "/api/auth/logout"
+
+
 User Management
 * Post - "/api/users/", "/api/users/:id/role", "/api/users/:id/delete"
+
+
 Events
 * Post - "/api/events/galleries/:galleryID/enter", "/api/events/galleries/:galleryID/leave", "/api/events/rooms/:roomID/enter", "/api/events/rooms/:roomID/leave", "/api/events/history/reconcile"
+
+
 Web Pages
 * Get - "/", "/login", "/galleries/galleryID", "/rooms/roomID", "/users", "/events", "/audit"
 
