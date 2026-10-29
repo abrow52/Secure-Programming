@@ -1,4 +1,7 @@
 # Secure Art Gallery
+## Project Description
+
+A secure art gallery application that lets users view exhibits and higher-access view/edit privileged information.
 
 ## Team
 
@@ -9,7 +12,7 @@
 ### Installation
 Download the repository
 
-## Database Setup
+### Database Setup
 Docker will create and seed the database when building the container
 
 ### Running (local host)
@@ -18,10 +21,6 @@ In terminal type:
 - docker compose up --build
 
 Enter the host link into a browser to access the site (http://localhost:3000/) or click the link given by the container on Docker Desktop
-
-## Project Description
-
-A secure art gallery application that lets users view exhibits and users with higher access to view/edit privileged information.
 
 ## Technology Stack
 
@@ -35,6 +34,10 @@ A secure art gallery application that lets users view exhibits and users with hi
 
 Browser → Backend/API → Database
 
+## User Roles:
+- Guests, Employees, and Admins - Browse the galleries
+- Employees & Admins - View gallery events and view gallery/rom occupancy
+- Admins - Edit, create, and delete users
 
 ## API Endpoints
 Authentication
@@ -46,11 +49,6 @@ Events
 * Post - "/api/events/galleries/:galleryID/enter", "/api/events/galleries/:galleryID/leave", "/api/events/rooms/:roomID/enter", "/api/events/rooms/:roomID/leave", "/api/events/history/reconcile"
 Web Pages
 * Get - "/", "/login", "/galleries/galleryID", "/rooms/roomID", "/users", "/events", "/audit"
-
-## User Roles:
-- Guests, Employees, and Admins - Browse the galleries
-- Employees & Admins - View gallery events and view gallery/rom occupancy
-- Admins - Edit, create, and delete users
 
 ## Testing: 
 ### Functional Requirements
