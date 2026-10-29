@@ -1,12 +1,10 @@
 # Secure Art Gallery
 ## Project Description
 
-A secure art gallery application that lets users view exhibits and higher-access view/edit privileged information.
+A secure art gallery application that lets users view exhibits and higher-access users view/edit privileged information.
 
 ## Team
-
-- Alicia Brown
-- Anna Prack
+Alicia Brown & Anna Prack
 
 ## Download and Deployment
 ### Installation
@@ -59,15 +57,16 @@ Web Pages
 ## Testing: 
 ### Functional Requirements
 
-FR-01 ...
-FR-02 ...
-...
+- All users can access the galleries and rooms
+- Employees and Admins can see room occupancy
+- Guests are unable to see, access, and edit the events, audit log, and users pages
 
 ### Security Requirements
 
-SR-01 ...
-SR-02 ...
-...
+- All passwords are stored securely
+- Users are unable to enter galleries/rooms through a URL and can only access the non gallery/room pages if they have the proper access and are on the home page
+- SQL injections and XSS attacks are successfully prevented
+- Escalation of privilege is prevented
 
 ## Security Controls
 - Rate limiting is used to prevent DoS attacks
@@ -76,7 +75,7 @@ SR-02 ...
 - The session is regenerated after a successful login
 - SQL queries use parameterized values to reduce risk of SQL injection
 - All content is role-restricted
-- Session is destroyed on logout
+- Session is destroyed on logout and regenerated after login
 
 ## Known Limitations
 
