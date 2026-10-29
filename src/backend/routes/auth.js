@@ -20,12 +20,38 @@ const loginLimiter = rateLimit({
     }
 });
 
+const { csrfSync } = require("csrf-sync");
+
+const {
+    generateToken,
+    csrfSynchronisedProtection
+} = csrfSync({
+    getTokenFromRequest: (req) => req.body?._csrf
+});
+
+const csrfProtection = (req, res, next) => {
+    csrfSynchronisedProtection(req, res, (err) => {
+        if (err) {
+            return res.status(403).send("Invalid or missing CSRF token");
+        }
+
+        next();
+    });
+};
+
+// router.get("/login", (req, res) => {
+//     res.render("login");
+// });
 router.get("/login", (req, res) => {
-    res.render("login");
+    const csrfToken = generateToken(req);
+
+    res.render("login", {
+        csrfToken
+    });
 });
 
 //login
-router.post("/login", loginLimiter, async (req, res) => {
+router.post("/login", loginLimiter, csrfProtection, async (req, res) => {
     const { username, password } = req.body;
 
     if (
@@ -110,7 +136,7 @@ router.post("/login", loginLimiter, async (req, res) => {
 });
 
 // Logout
-router.post("/logout", async (req, res) => {
+router.post("/logout", csrfProtection, async (req, res) => {
     const user = req.session?.user;
 
     if (!req.session) {
@@ -224,5 +250,5 @@ async function requireOutsideGallery(req, res, next) {
 
 module.exports = {
     router,
-    requireRole, requireOutsideGallery
+    requireRole, requireOutsideGallery, generateToken
 };
