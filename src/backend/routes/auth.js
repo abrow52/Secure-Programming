@@ -32,7 +32,7 @@ router.post("/login", loginLimiter, async (req, res) => {
         typeof username !== "string" ||
         typeof password !== "string" ||
         username.length === 0 ||
-        username.length > 100 ||
+        username.length > 50 ||
         password.length === 0 ||
         password.length > 72
     ) {
