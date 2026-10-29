@@ -8,12 +8,16 @@
 ## Download and Deployment
 ### Installation
 Download the repository
+
+## Database Setup
+Docker will create and seed the database when building the container
+
 ### Running (local host)
 In terminal type: 
 - cp .env.example .env
 - docker compose up --build
 
-Enter the host link into a browser to access the site (http://localhost:3000/) or click the link in the container on Docker Desktop
+Enter the host link into a browser to access the site (http://localhost:3000/) or click the link given by the container on Docker Desktop
 
 ## Project Description
 
@@ -31,14 +35,17 @@ A secure art gallery application that lets users view exhibits and users with hi
 
 Browser → Backend/API → Database
 
-## Database Structure
-
-...
 
 ## API Endpoints
-
-- Endpoint 1
-- Endpoint 2
+Authentication
+* Get - "/api/auth/login"
+* Post - "/api/auth/login", "/api/auth/logout"
+User Management
+* Post - "/api/users/", "/api/users/:id/role", "/api/users/:id/delete"
+Events
+* Post - "/api/events/galleries/:galleryID/enter", "/api/events/galleries/:galleryID/leave", "/api/events/rooms/:roomID/enter", "/api/events/rooms/:roomID/leave", "/api/events/history/reconcile"
+Web Pages
+* Get - "/", "/login", "/galleries/galleryID", "/rooms/roomID", "/users", "/events", "/audit"
 
 ## User Roles:
 - Guests, Employees, and Admins - Browse the galleries
@@ -59,8 +66,13 @@ SR-02 ...
 ...
 
 ## Security Controls
-
-...
+- Rate limiting is used to prevent DoS attacks
+- User passwords are encrypted before being stored in the database
+- Entered values are validated before interacting with the database
+- The session is regenerated after a successful login
+- SQL queries use parameterized values to reduce risk of SQL injection
+- All content is role-restricted
+- Session is destroyed on logout
 
 ## Known Limitations
 
