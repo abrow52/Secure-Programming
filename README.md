@@ -26,7 +26,7 @@ Enter the host link into a browser to access the site (http://localhost:3000/) o
 
 - Frontend: HTML, CSS, Bootstrap, EJS, JS
 - Backend: Node, Express
-- Database: SQLite
+- Database: MySQL
 - Authentication: Express sessions/cookies
 - Deployment: Docker / Render
 
