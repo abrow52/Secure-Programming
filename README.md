@@ -12,10 +12,11 @@ Download the repository
 
 ### Database Setup
 Docker will create and seed the database when building the container
+In terminal type and change the values of DB_PASSWORD, MYSQL_ROOT_PASSWORD, and SESSION_SECRET: 
+- cp .env.example .env
 
 ### Deployment
 In terminal type: 
-- cp .env.example .env
 - docker compose up --build
 
 Enter the host link into a browser to access the site (http://localhost:3000/) or click the link given by the container on Docker Desktop
@@ -60,13 +61,12 @@ Web Pages
 - All users can access the galleries and rooms
 - Employees and Admins can see room occupancy
 - Guests are unable to see, access, and edit the events, audit log, and users pages
+- Employees are unable to access the audit log page
 
 ### Security Requirements
 
 - All passwords are stored securely
 - Users are unable to enter galleries/rooms through a URL and can only access the non gallery/room pages if they have the proper access and are on the home page
-- SQL injections and XSS attacks are successfully prevented
-- Escalation of privilege is prevented
 
 ## Security Controls
 - Rate limiting is used to prevent DoS attacks
@@ -76,7 +76,9 @@ Web Pages
 - SQL queries use parameterized values to reduce risk of SQL injection
 - All content is role-restricted
 - Session is destroyed on logout and regenerated after login
+- CSRF protections are implemented at login to prevent a potential attack
 
 ## Known Limitations
 
-...
+- Navigation to all pages must be done from the home page
+- When run on http, on user creation the users password is sent over plaintext
