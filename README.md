@@ -16,7 +16,7 @@ Docker will create and seed the database when building the container
 
 In terminal type: cp .env.example .env
 
-Change the values of: DB_PASSWORD, MYSQL_ROOT_PASSWORD, and SESSION_SECRET:
+Change the values of: DB_PASSWORD, MYSQL_ROOT_PASSWORD, and SESSION_SECRET
 
 
 ### Deployment
