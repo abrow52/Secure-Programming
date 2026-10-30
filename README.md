@@ -12,12 +12,15 @@ Download the repository
 
 ### Database Setup
 Docker will create and seed the database when building the container
-In terminal type and change the values of DB_PASSWORD, MYSQL_ROOT_PASSWORD, and SESSION_SECRET: 
-- cp .env.example .env
+
+
+In terminal type: cp .env.example .env
+
+Change the values of: DB_PASSWORD, MYSQL_ROOT_PASSWORD, and SESSION_SECRET:
+
 
 ### Deployment
-In terminal type: 
-- docker compose up --build
+In terminal type: docker compose up --build
 
 Enter the host link into a browser to access the site (http://localhost:3000/) or click the link given by the container on Docker Desktop
 
