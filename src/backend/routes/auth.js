@@ -39,9 +39,6 @@ const csrfProtection = (req, res, next) => {
     });
 };
 
-// router.get("/login", (req, res) => {
-//     res.render("login");
-// });
 router.get("/login", (req, res) => {
     const csrfToken = generateToken(req);
 

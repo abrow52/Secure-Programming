@@ -27,6 +27,7 @@
       </header>
       <section class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
         <form action="/api/auth/login" method="POST" style="width: 23rem;">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
 
           <h3 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Log in</h3>
 

@@ -7,7 +7,7 @@ const db = require("./database");
 //setup routes
 const userRoutes = require("./routes/users");
 const {router: eventRoutes, getOccupancy} = require("./routes/events");
-const { router: authRoutes, requireRole, requireOutsideGallery } = require("./routes/auth");
+const { router: authRoutes, requireRole, requireOutsideGallery, generateToken } = require("./routes/auth");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -60,6 +60,7 @@ app.use(express.static(path.join(__dirname, "..", "images")));
 // Home page
 //Render the home page and display galleries from db
 app.get("/", async (req, res) => {
+    const csrfToken = generateToken(req);
     try {
         const [galleries] = await db.query(`
             SELECT
@@ -93,7 +94,7 @@ app.get("/", async (req, res) => {
         res.render("index", {
             user: req.session.user || null,
             galleries: galleries,
-            occupancy
+            occupancy, csrfToken
         });
     } catch (err) {
         console.error(err);
@@ -107,9 +108,9 @@ app.get("/", async (req, res) => {
 
 // Login Page
 app.get("/login", (req, res) => {
-
-    res.render("login");
-});
+    const csrfToken = generateToken(req);
+    res.render("login", { csrfToken });
+  });
 
 
 // Room page
@@ -293,6 +294,7 @@ app.get("/rooms/:roomId", requireRole("admin", "employee", "guest"), async (req,
 // Users Page
 //lists users in the db
 app.get("/users", requireRole("admin"), requireOutsideGallery, async (req, res) => {
+    const csrfToken = generateToken(req);
     try {
         const [users] = await db.query(
             "SELECT user_id, username, role FROM Users"
@@ -300,7 +302,7 @@ app.get("/users", requireRole("admin"), requireOutsideGallery, async (req, res) 
 
         res.render("users", {
             user: req.session.user || null,
-            Users: users
+            Users: users, csrfToken
         });
 
     } catch (err) {
@@ -313,6 +315,7 @@ app.get("/users", requireRole("admin"), requireOutsideGallery, async (req, res) 
 // Events Page
 //displays the list people who have entered/left galleries/rooms
 app.get("/events", requireRole("admin", "employee"), requireOutsideGallery, async (req, res) => {
+    const csrfToken = generateToken(req);
     try {
         const [galleryEvents] = await db.query(`
             SELECT ge.event_id, u.username, g.name AS gallery_name,
@@ -333,7 +336,7 @@ app.get("/events", requireRole("admin", "employee"), requireOutsideGallery, asyn
             ORDER BY re.occurred_at DESC, re.event_id DESC
             LIMIT 100
         `);
-        return res.render("events", { galleryEvents, roomEvents });
+        return res.render("events", { galleryEvents, roomEvents, csrfToken });
     } catch (err) {
         console.error("Unable to load event history:", err);
         return res.status(500).send("Unable to load event history");
@@ -341,6 +344,7 @@ app.get("/events", requireRole("admin", "employee"), requireOutsideGallery, asyn
 });
 
 app.get("/audit", requireRole("admin"), requireOutsideGallery, async (req, res) => {
+        const csrfToken = generateToken(req);
         // get filter values
         const getFilter = (value) => {
             if (value === undefined) return "";
@@ -399,7 +403,8 @@ app.get("/audit", requireRole("admin"), requireOutsideGallery, async (req, res) 
         return res.render("audit", {
             auditLogs,
             filters,
-            user: req.session.user
+            user: req.session.user, 
+            csrfToken
         });
     } catch (err) {
         console.error("Unable to load audit log:", err);
