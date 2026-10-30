@@ -30,7 +30,10 @@
                 <% } %>
                 <% if (user && user.role) { %>
                   <li>
-                    <form action="/api/auth/logout" method="POST"><button type="submit" style="border:none; background:none; padding: 0;">Logout</button></form>
+                    <form action="/api/auth/logout" method="POST">
+                      <button type="submit" style="border:none; background:none; padding: 0;">Logout</button>
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                    </form>
                   </li>
                 <% } %>
                 <% if (user && (user.role === "admin" || user.role === "employee")) { %>
