@@ -88,7 +88,8 @@ CREATE TABLE Paintings (
 -- Records people entering/leaving a gallery
 CREATE TABLE GalleryEvents (
     event_id INT NOT NULL AUTO_INCREMENT,
-    user_id INT NOT NULL,
+    user_id INT NULL,
+    username VARCHAR(50) NULL,
     gallery_id INT NOT NULL,
     type VARCHAR(20) NOT NULL,
     occurred_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -101,7 +102,7 @@ CREATE TABLE GalleryEvents (
     CONSTRAINT fk_gallery_events_user
         FOREIGN KEY (user_id)
         REFERENCES Users (user_id)
-        ON DELETE RESTRICT
+        ON DELETE SET NULL
         ON UPDATE CASCADE,
 
     CONSTRAINT fk_gallery_events_gallery
@@ -121,7 +122,8 @@ CREATE TABLE GalleryEvents (
 -- Records people entering/leaving rooms
 CREATE TABLE RoomEvents (
     event_id INT NOT NULL AUTO_INCREMENT,
-    user_id INT NOT NULL,
+    user_id INT NULL,
+    username VARCHAR(50) NULL,
     room_id INT NOT NULL,
     type VARCHAR(20) NOT NULL,
     occurred_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -134,7 +136,7 @@ CREATE TABLE RoomEvents (
     CONSTRAINT fk_room_events_user
         FOREIGN KEY (user_id)
         REFERENCES Users (user_id)
-        ON DELETE RESTRICT
+        ON DELETE SET NULL
         ON UPDATE CASCADE,
 
     CONSTRAINT fk_room_events_room
@@ -155,9 +157,10 @@ CREATE TABLE RoomEvents (
 CREATE TABLE AuditLogs (
     log_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NULL,
+    username VARCHAR(50) NULL,
     action VARCHAR(100) NOT NULL,
-    resource_type VARCHAR(20) NULL, -- Object type, gallery or room
-    resource_id INT NULL, -- Primary key, gallery_id or room_id 
+    resource_type VARCHAR(20) NULL,
+    resource_id INT NULL,
     ip_address VARCHAR(45) NULL,
     occurred_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -177,15 +180,31 @@ CREATE TABLE AuditLogs (
 
 
 CREATE TABLE UserOccupancy (
-    user_id INT PRIMARY KEY,
+    user_id INT NOT NULL,
     gallery_id INT NULL,
     room_id INT NULL,
-    FOREIGN KEY (user_id)
-        REFERENCES Users(user_id),
-    FOREIGN KEY (gallery_id)
-        REFERENCES Galleries(gallery_id),
-    FOREIGN KEY (room_id)
-        REFERENCES Rooms(room_id)
-);
+
+    PRIMARY KEY (user_id),
+
+    CONSTRAINT fk_occupancy_user
+        FOREIGN KEY (user_id)
+        REFERENCES Users (user_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_occupancy_gallery
+        FOREIGN KEY (gallery_id)
+        REFERENCES Galleries (gallery_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_occupancy_room
+        FOREIGN KEY (room_id)
+        REFERENCES Rooms (room_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_general_ci;
 
 COMMIT;

@@ -11,6 +11,7 @@ const { router: authRoutes, requireRole, requireOutsideGallery, generateToken } 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const fs = require("fs");
 
 //start server
 app.listen(PORT, '0.0.0.0', () => {
@@ -25,7 +26,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env.COOKIE_SECURE === 'true',
         sameSite: 'lax',
         maxAge: 1000 * 60 * 60
     }
@@ -52,9 +53,6 @@ app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
     next();
 });
-
-//static path to images
-app.use(express.static(path.join(__dirname, "..", "images")));
 
 
 // Home page
@@ -105,6 +103,123 @@ app.get("/", async (req, res) => {
 
 });
 
+//require a role to view the images (issue fix)
+app.get(
+    "/api/images/:type/:id",
+    requireRole("admin", "employee", "guest"),
+    async (req, res) => {
+        try {
+            const { type } = req.params;
+            const id = Number(req.params.id);
+
+            if (!Number.isInteger(id) || id <= 0) {
+                return res.status(400).send("Invalid image ID");
+            }
+
+            let sql;
+
+            // only look in certain db tables
+            switch (type) {
+                case "painting":
+                    sql = `
+                        SELECT image_url
+                        FROM Paintings
+                        WHERE painting_id = ?
+                    `;
+                    break;
+
+                case "gallery":
+                    sql = `
+                        SELECT image_url
+                        FROM Galleries
+                        WHERE gallery_id = ?
+                    `;
+                    break;
+
+                case "room":
+                    sql = `
+                        SELECT image_url
+                        FROM Rooms
+                        WHERE room_id = ?
+                    `;
+                    break;
+
+                default:
+                    return res.status(400).send("Invalid image type");
+            }
+
+            const [results] = await db.query(sql, [id]);
+
+            if (results.length === 0 || !results[0].image_url) {
+                return res.status(404).send("Image not found");
+            }
+
+            const imageRoot = path.resolve(__dirname, "..", "images");
+
+            const imagePath = path.resolve(
+                imageRoot,
+                results[0].image_url.replace(/^[/\\]+/, "")
+            );
+
+            if (!imagePath.startsWith(imageRoot + path.sep)) {
+                return res.status(403).send("Access denied");
+            }
+
+            const relativePath = path.relative(imageRoot, imagePath);
+            const folder = relativePath.split(path.sep)[0];
+
+            const allowedFolders = [
+                "animals",
+                "dessert",
+                "galleries",
+                "nature",
+                "rooms"
+            ];
+
+            if (!allowedFolders.includes(folder)) {
+                return res.status(403).send("Access denied");
+            }
+
+            res.set("Cache-Control", "private, no-store");
+
+            res.sendFile(imagePath, (err) => {
+                if (err && !res.headersSent) {
+                    res.status(err.statusCode || 500).end();
+                }
+            });
+
+        } catch (err) {
+            console.error("Image retrieval error:", err);
+            res.status(500).send("Unable to retrieve image");
+        }
+    }
+);
+
+// allow public access to the logo and placeholder images
+app.get("/api/images/:filename", (req, res) => {
+    const allowedImages = ["logo.svg", "placeholder.png"];
+
+    const filename = req.params.filename;
+
+    if (!allowedImages.includes(filename)) {
+        return res.status(403).send("Access denied");
+    }
+
+    const imagePath = path.join(
+        __dirname,
+        "..",
+        "images",
+        filename
+    );
+
+    res.set("Cache-Control", "public, max-age=3600");
+
+    res.sendFile(imagePath, (err) => {
+        if (err && !res.headersSent) {
+            res.status(404).send("Image not found");
+        }
+    });
+});
 
 // Login Page
 app.get("/login", (req, res) => {
