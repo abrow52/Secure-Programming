@@ -177,40 +177,82 @@ router.post("/logout", csrfProtection, async (req, res) => {
     });
 });
 
-//check the role of the user
+//check the role of the user (updated for issue 2 fix)
 function requireRole(...allowedRoles) {
     return async (req, res, next) => {
-        if (!req.session.user) {
+        if (!req.session || !req.session.user) {
             return res.redirect("/login");
         }
 
-        if (!allowedRoles.includes(req.session.user.role)) {
-            try {
-                await db.query(
-                    `INSERT INTO AuditLogs
-                     (user_id, action, resource_type, resource_id, ip_address)
-                     VALUES (?, ?, ?, ?, ?)`,
-                    [
-                        req.session.user.user_id,
-                        `ACCESS_DENIED: ${req.method} ${req.path}`,
-                        "PAGE",
-                        null,
-                        req.ip
-                    ]
-                );
-            } catch (err) {
-                console.error(
-                    "Failed to log login denied access:",
-                    err
+        try {
+            const userId = req.session.user.user_id;
+
+            // check the users role and name from the db
+            const [users] = await db.query(
+                `SELECT username, role
+                 FROM Users
+                 WHERE user_id = ?`,
+                [userId]
+            );
+
+            // Check whether the account still exists
+            if (users.length === 0) {
+                return req.session.destroy((err) => {
+                    if (err) {
+                        console.error("Session destruction failed:", err);
+                    }
+
+                    res.clearCookie("connect.sid");
+
+                    return res.redirect("/login");
+                });
+            }
+
+            const currentUser = users[0];
+
+            // update session with db information
+            req.session.user.username = currentUser.username;
+            req.session.user.role = currentUser.role;
+
+            if (!allowedRoles.includes(currentUser.role)) {
+                try {
+                    await db.query(
+                        `INSERT INTO AuditLogs
+                         (user_id, action, resource_type, resource_id, ip_address)
+                         VALUES (?, ?, ?, ?, ?)`,
+                        [
+                            userId,
+                            `ACCESS_DENIED: ${req.method} ${req.path}`,
+                            "PAGE",
+                            null,
+                            req.ip
+                        ]
+                    );
+                } catch (err) {
+                    console.error(
+                        "Failed to log denied access:",
+                        err
+                    );
+                }
+
+                return res.status(403).send(
+                    "You do not have permission to access this page."
                 );
             }
 
-            return res.status(403).send("You do not have permission to access this page.");
-        }
+            // User is authorized
+            return next();
 
-        next();
+        } catch (err) {
+            console.error("Role verification failed:", err);
+
+            return res.status(500).send(
+                "Unable to verify user permissions."
+            );
+        }
     };
 }
+
 
 // block url acces to other pages if inside galler or room
 async function requireOutsideGallery(req, res, next) {
