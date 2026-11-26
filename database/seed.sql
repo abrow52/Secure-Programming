@@ -60,20 +60,20 @@ INSERT INTO Paintings
     (1024, 14, 'Tree Picture 6', 'nature/trees/tree6.jpg'),
 
     -- Cake
-    (1025, 15, 'Cake Picture 1', 'Dessert/cake/cake1.jpg'),
-    (1026, 15, 'Cake Picture 2', 'Dessert/cake/cake2.jpg'),
-    (1027, 15, 'Cake Picture 3', 'Dessert/cake/cake3.jpg'),
-    (1028, 15, 'Cake Picture 4', 'Dessert/cake/cake4.jpg'),
-    (1029, 15, 'Cake Picture 5', 'Dessert/cake/cake5.jpg'),
-    (1030, 15, 'Cake Picture 6', 'Dessert/cake/cake6.jpg'),
+    (1025, 15, 'Cake Picture 1', 'dessert/cake/cake1.jpg'),
+    (1026, 15, 'Cake Picture 2', 'dessert/cake/cake2.jpg'),
+    (1027, 15, 'Cake Picture 3', 'dessert/cake/cake3.jpg'),
+    (1028, 15, 'Cake Picture 4', 'dessert/cake/cake4.jpg'),
+    (1029, 15, 'Cake Picture 5', 'dessert/cake/cake5.jpg'),
+    (1030, 15, 'Cake Picture 6', 'dessert/cake/cake6.jpg'),
 
     -- Cookie
-    (1031, 16, 'Cookie Picture 1', 'Dessert/cookies/cookie1.jpg'),
-    (1032, 16, 'Cookie Picture 2', 'Dessert/cookies/cookie2.jpg'),
-    (1033, 16, 'Cookie Picture 3', 'Dessert/cookies/cookie3.jpg'),
-    (1034, 16, 'Cookie Picture 4', 'Dessert/cookies/cookie4.jpg'),
-    (1035, 16, 'Cookie Picture 5', 'Dessert/cookies/cookie5.jpg'),
-    (1036, 16, 'Cookie Picture 6', 'Dessert/cookies/cookie6.jpg');
+    (1031, 16, 'Cookie Picture 1', 'dessert/cookies/cookie1.jpg'),
+    (1032, 16, 'Cookie Picture 2', 'dessert/cookies/cookie2.jpg'),
+    (1033, 16, 'Cookie Picture 3', 'dessert/cookies/cookie3.jpg'),
+    (1034, 16, 'Cookie Picture 4', 'dessert/cookies/cookie4.jpg'),
+    (1035, 16, 'Cookie Picture 5', 'dessert/cookies/cookie5.jpg'),
+    (1036, 16, 'Cookie Picture 6', 'dessert/cookies/cookie6.jpg');
 
 
 COMMIT;

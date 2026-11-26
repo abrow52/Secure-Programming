@@ -20,7 +20,7 @@
       <div class="navbar shadow-sm">
         <div class="container">
           <a class="navbar-brand d-flex align-items-center">      
-            <img style="width: 50px; height: auto;" src="/logo.svg">
+            <img style="width: 50px; height: auto;" src="/api/images/logo.svg">
             <strong>AA Galleries</strong>
           </a>
         </div>
@@ -43,9 +43,9 @@
                     <div class="col">
                         <div class="card shadow-sm">
                             <% if (painting.image_url) { %>
-                                <img src="/<%= painting.image_url %>" class="card-img-top" alt="<%= painting.name %>">
+                                <img src="/api/images/painting/<%= painting.painting_id %>" class="card-img-top" alt="<%= painting.name %>">
                             <% } else { %>
-                                <img src="/placeholder.png" class="card-img-top" alt="No image available">
+                                <img src="/api/images/placeholder.png" class="card-img-top" alt="No image available">
                             <% } %>
                         </div>
                     </div>
